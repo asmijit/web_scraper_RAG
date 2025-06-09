@@ -50,8 +50,8 @@ This project implements a Retrieval-Augmented Generation (RAG) pipeline using th
 1. Clone the repository:
 
 ```bash
-git clone git@github.com:yourusername/your-repo.git
-cd your-repo
+git clone git@github.com:asmijit/web_Scraper_RAG.git
+cd web_Scraper_RAG
 ```
 
 2. Install dependencies:
