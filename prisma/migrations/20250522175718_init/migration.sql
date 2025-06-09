@@ -1,0 +1,14 @@
+-- CreateTable
+CREATE TABLE "ChatHistory" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "userInput" TEXT NOT NULL,
+    "botReply" TEXT NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- CreateTable
+CREATE TABLE "ContextMemory" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "summary" TEXT NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
