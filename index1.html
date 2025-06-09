@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>RAG Q&A Interface with Memory</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #ffffff;
+    }
+    input, textarea, button {
+      width: 100%;
+      margin: 10px 0;
+      padding: 12px;
+      font-size: 16px;
+    }
+    #chatHistory {
+      margin-top: 20px;
+      background: #e5dddd;
+      padding: 15px;
+      border: 1px solid #ccc;
+      white-space: pre-wrap;
+    }
+    .msg-block {
+      margin-bottom: 10px;
+      padding: 8px;
+      border-bottom: 1px solid #f3eded;
+    }
+    .user {
+      font-weight: bold;
+      color: #333;
+    }
+    .bot {
+      color: #007acc;
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2>RAG-Powered Q&A (with Memory)</h2>
+
+  <input type="text" id="url" placeholder="Enter the webpage URL to scrape" />
+  <button id="scrapeBtn">Scrape</button>
+
+  <textarea id="question" placeholder="Enter your question" rows="4"></textarea>
+  <button id="askBtn" disabled>Ask</button>
+
+  <div id="chatHistory"><strong>History:</strong></div>
+
+  <script>
+    const urlInput = document.getElementById("url");
+    const questionInput = document.getElementById("question");
+    const chatDiv = document.getElementById("chatHistory");
+    const askBtn = document.getElementById("askBtn");
+    const scrapeBtn = document.getElementById("scrapeBtn");
+
+    let isScraped = false;
+
+    scrapeBtn.addEventListener("click", async () => {
+      const url = urlInput.value.trim();
+      if (!url) return alert("Please enter a valid URL.");
+
+      chatDiv.innerHTML = "Scraping site...";
+      askBtn.disabled = true;
+
+      try {
+        const res = await fetch("http://localhost:3005/scrape", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url }),
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          isScraped = true;
+          askBtn.disabled = false;
+          chatDiv.innerHTML = "<strong>History:</strong><br>Scraping complete. Ask your question!";
+        } else {
+          chatDiv.innerHTML = `<strong>Error:</strong> ${data.error || "Scrape failed."}`;
+        }
+      } catch (err) {
+        chatDiv.innerHTML = `<strong>Fetch error:</strong> ${err.message}`;
+      }
+    });
+
+    askBtn.addEventListener("click", async () => {
+      const question = questionInput.value.trim();
+      if (!question) return alert("Please enter a question.");
+
+      const userBlock = document.createElement("div");
+      userBlock.className = "msg-block";
+      userBlock.innerHTML = `<span class="user">You:</span> ${question}`;
+      chatDiv.appendChild(userBlock);
+
+      questionInput.value = "";
+
+      const resBlock = document.createElement("div");
+      resBlock.className = "msg-block";
+      resBlock.innerHTML = "<span class='bot'>Bot:</span> Loading...";
+      chatDiv.appendChild(resBlock);
+
+      try {
+        const res = await fetch("http://localhost:3005/ask", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question }),
+        });
+
+        const data = await res.json();
+        if (res.ok && data.answer) {
+          resBlock.innerHTML = `<span class='bot'>Bot:</span> ${data.answer}`;
+        } else {
+          resBlock.innerHTML = `<span class='bot'>Bot:</span> Error: ${data.error || "No response."}`;
+        }
+      } catch (err) {
+        resBlock.innerHTML = `<span class='bot'>Bot:</span> Fetch error: ${err.message}`;
+      }
+    });
+  </script>
+</body>
+</html>
