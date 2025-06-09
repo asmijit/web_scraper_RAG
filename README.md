@@ -1,4 +1,4 @@
-# RAG-based Web Question Answering System
+# WebRAG: A RAG-based Web Question Answering System
 
 This project implements a Retrieval-Augmented Generation (RAG) pipeline using the LangChain framework and Google Generative AI models. It allows users to input a URL and a question, automatically scrapes the webpage, embeds the content into a vector store, and generates an answer to the question based strictly on the provided context.
 
