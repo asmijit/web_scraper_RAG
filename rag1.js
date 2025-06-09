@@ -8,7 +8,7 @@ import { PrismaClient } from "@prisma/client";
 import * as cheerio from "cheerio";
 
 const prisma = new PrismaClient();
-const apiKey = "AIzaSyCV7Z5QzjAD5v7iNf6XdaQWkdZOm20eoYY";
+const apiKey = "";
 const ai = new GoogleGenerativeAI(apiKey);
 const model = ai.getGenerativeModel({ model: "gemini-2.0-flash" });
 
